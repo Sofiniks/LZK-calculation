@@ -1,0 +1,68 @@
+{
+  "cleaning": {
+    "high_pressure_fresh_water": {
+      "up_to_300_bar": { "en": "High pressure fresh water washing up to 300 bar", "ru": "Обмыв пресной водой высокого давления до 300 бар", "unit": "sq.m", "price": 1.40 },
+      "up_to_400_bar": { "en": "High pressure fresh water washing up to 400 bar", "ru": "Обмыв пресной водой высокого давления до 400 бар", "unit": "sq.m", "price": 2.20 },
+      "up_to_500_bar": { "en": "High pressure fresh water washing up to 500 bar", "ru": "Обмыв пресной водой высокого давления до 500 бар", "unit": "sq.m", "price": 3.50 },
+      "algae_fouling_ratio": { "en": "Algae fouling", "ru": "При обрастании водорослями", "type": "ratio", "value": 1.3 },
+      "shell_rock_scrapping": { "en": "Scrapping of shell rock fouling", "ru": "Ошкрябка ракушечника", "unit": "sq.m", "price": 3.30 }
+    },
+    "high_pressure_air": { "en": "High pressure air blowing", "ru": "Обдув воздухом высокого давления", "unit": "sq.m", "price": 0.26 },
+    "fresh_water_rinse": { "en": "Fresh water rinse up to 200 bar prior painting", "ru": "Обмыв пресной водой до 200 бар перед окраской", "unit": "sq.m", "price": 0.68 },
+    "chemical_cleaning": { "en": "Chemical cleaning of oily spots", "ru": "Химическая очистка масляных пятен", "unit": "sq.m", "price": 7.50 },
+    "scraping": {
+      "st1": { "en": "Scraping (St1)", "ru": "Зачистка (отбивка) St1", "unit": "sq.m", "price": 7.10 },
+      "st2": { "en": "Scraping (St2)", "ru": "Зачистка (отбивка) St2", "unit": "sq.m", "price": 11.80 }
+    },
+    "sand_sweeping": { "en": "Sand sweeping (100%)", "ru": "Легкая очистка (свипинг)", "unit": "sq.m", "price": 6.90 },
+    "sand_blasting": {
+      "sa1": { "en": "Sand blasting SA-1.0", "ru": "Пескоструйная очистка SA-1.0", "unit": "sq.m", "price": 9.10 },
+      "sa2": { "en": "Sand blasting SA-2.0", "ru": "Пескоструйная очистка SA-2.0", "unit": "sq.m", "price": 11.80 },
+      "sa25": { "en": "Sand blasting SA-2.5", "ru": "Пескоструйная очистка SA-2.5", "unit": "sq.m", "price": 17.40 }
+    }
+  },
+  "painting": {
+    "full_single": { "en": "Full coat single-component", "ru": "Полный слой однокомпонентная краска", "unit": "sq.m", "price": 1.20 },
+    "full_antifouling": { "en": "Full coat antifouling", "ru": "Полный слой противообрастающая краска", "unit": "sq.m", "price": 1.40 },
+    "full_double_ratio": { "en": "Full coat double-component", "ru": "Полный слой двухкомпонентная краска", "type": "ratio", "value": 1.1 },
+    "dft150_ratio": { "en": "Full coat DFT 150 mic", "ru": "Толщина слоя 150 мкм", "type": "ratio", "value": 1.05 },
+    "dft200_ratio": { "en": "Full coat DFT 200 mic", "ru": "Толщина слоя 200 мкм", "type": "ratio", "value": 1.1 },
+    "stripe": { "en": "Stripe coating, per layer", "ru": "Полосовая окраска за слой", "unit": "run.m", "price": 2.50 },
+    "manual": { "en": "Manual painting, per layer", "ru": "Ручная окраска за слой", "unit": "sq.m", "price": 3.60 }
+  },
+  "marks": {
+    "vessel_name": { "en": "Vessel name", "ru": "Название судна", "unit": "set", "price": 560.00 },
+    "port_registry": { "en": "Port of registry", "ru": "Порт приписки", "unit": "set", "price": 120.00 },
+    "draft_marks": { "en": "Draft marks (6 places)", "ru": "Марки осадки (6 мест)", "unit": "set", "price": 690.00 },
+    "plimsoll": { "en": "Plimsoll disc", "ru": "Отметка Плимсоля", "unit": "set", "price": 200.00 },
+    "bow_thruster": { "en": "Bow thruster mark", "ru": "Марка ПУ", "unit": "set", "price": 90.00 },
+    "bulbous": { "en": "Bulbous mark", "ru": "Марка бульба", "unit": "set", "price": 90.00 },
+    "imo": { "en": "IMO number", "ru": "ИМО номер", "unit": "set", "price": 120.00 },
+    "waterline": { "en": "Waterline per meter", "ru": "Ватерлиния за метр", "unit": "m", "price": 3.10 }
+  },
+  "other": {
+    "hold_cleaning": { "en": "Hold cleaning", "ru": "Уборка трюма от продуктов очистки", "unit": "hold", "price": 900.00 },
+    "porthole_protection": { "en": "Porthole protection", "ru": "Защита иллюминаторов", "unit": "pcs", "price": 75.00 },
+    "drum_disposal": { "en": "Disposal of used paint drums", "ru": "Утилизация банок краски", "unit": "pcs", "price": 3.50 }
+  },
+  "ratios": {
+    "min_area": { "en": "Minimum treated area 100 m2", "ru": "Мин. площадь обработки корпуса 100 м²", "note": true },
+    "area_lt_30": { "en": "Area <30%", "ru": "Площадь <30%", "type": "ratio", "value": 1.4 },
+    "area_lt_70": { "en": "Area <70%", "ru": "Площадь <70%", "type": "ratio", "value": 1.2 },
+    "framework": { "en": "Open surfaces with framework", "ru": "Открытые поверхности с набором", "type": "ratio", "value": 1.25 },
+    "confined": { "en": "Confined spaces (tanks etc.)", "ru": "Закрытые помещения (танки)", "type": "ratio", "value": 3.5 },
+    "hold": { "en": "Cargo hold treatment", "ru": "Обработка трюмов", "type": "ratio", "value": 1.15 },
+    "ice_paint": { "en": "Old ice paint removal", "ru": "Удаление ледовой краски", "type": "ratio", "value": 1.7 },
+    "dft800": { "en": "Old paint >800 mic", "ru": "Старое покрытие >800 мкм", "type": "ratio", "value": 1.5 },
+    "dft1500": { "en": "Old paint >1500 mic", "ru": "Старое покрытие >1500 мкм", "type": "ratio", "value": 2.0 },
+    "metal_structures": { "en": "Metal structures", "ru": "Металлоконструкции", "type": "ratio", "value": 1.45 },
+    "lifting": { "en": "Lifting equipment used", "ru": "С использованием подъемных средств", "type": "ratio", "value": 1.2 },
+    "hatch_covers": { "en": "Hatch covers", "ru": "Люковые закрытия", "type": "ratio", "value": 1.2 },
+    "deck_saturation": { "en": "Deck with saturation", "ru": "Палуба с насыщением", "type": "ratio", "value": 1.2 }
+  },
+  "rules": {
+    "rounding": { "money": 2, "area": 0.1 },
+    "calculation": "base_price * all_selected_ratios * quantity"
+  }
+}
+
