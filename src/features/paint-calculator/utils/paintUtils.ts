@@ -70,9 +70,9 @@ export const createMultipliers = (work: PaintWorkPickerValue, areaKind: AreaKind
   const base = getPriceItem(work.path);
   if (base.unit === "sq.m") {
     const percent = work.percent ?? 100;
-    if (percent < 30) {
+    if (percent <= 30) {
       multipliers.push("area_lt_30");
-    } else if (percent < 70) {
+    } else if (percent <= 70) {
       multipliers.push("area_lt_70");
     }
   }
@@ -179,7 +179,9 @@ export const createWorkRow = (work: PaintWorkPickerValue, areaKind: AreaKind, ar
 
   return {
     type: 'work',
-    data: row
+    data: row,
+    path: work.path,
+    multipliers
   };
 };
 

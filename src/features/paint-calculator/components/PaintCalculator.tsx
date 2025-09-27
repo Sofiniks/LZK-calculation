@@ -1,11 +1,14 @@
 import {
   Container, Paper, Stack, TextField, Button, Table, TableHead, TableRow, TableCell, TableBody, TableFooter,
-  Typography, FormControl, InputLabel, Select, MenuItem, Chip, IconButton
+  Typography, FormControl, InputLabel, Select, MenuItem, Chip, IconButton, Alert, Snackbar
 } from "@mui/material";
-import { Delete, Edit } from "@mui/icons-material";
+import { Delete, Edit, ContentCopy } from "@mui/icons-material";
+import { useState } from "react";
 import PaintWorkPicker from "./PaintWorkPicker";
+import PriceBreakdownModal, { type PriceBreakdown } from "./PriceBreakdownModal";
 import { AREA_OPTIONS, type AreaKind } from "../types/areas";
 import { usePaintCalculator } from "../hooks";
+import { calculatePriceBreakdown, formatTableForExcel, copyToClipboard } from "../utils";
 
 export default function PaintCalculator() {
   const {
@@ -25,6 +28,41 @@ export default function PaintCalculator() {
     cancelEdit,
     saveEdit
   } = usePaintCalculator();
+
+  // Состояние для модального окна детализации цены
+  const [breakdownModalOpen, setBreakdownModalOpen] = useState(false);
+  const [selectedBreakdown, setSelectedBreakdown] = useState<PriceBreakdown | null>(null);
+  const [selectedWorkTitle, setSelectedWorkTitle] = useState('');
+  
+  // Состояние для уведомления о копировании
+  const [copyNotification, setCopyNotification] = useState(false);
+
+  // Обработчик клика на строку для показа детализации цены
+  const handleRowClick = (row: any) => {
+    if (row.type === 'work' && row.data) {
+      try {
+        const breakdown = calculatePriceBreakdown(row);
+        setSelectedBreakdown(breakdown);
+        setSelectedWorkTitle(`${row.data.en} / ${row.data.ru}`);
+        setBreakdownModalOpen(true);
+      } catch (error) {
+        console.error('Error calculating breakdown:', error);
+      }
+    }
+  };
+
+  // Обработчик копирования в Excel
+  const handleCopyToExcel = async () => {
+    if (tableRows.length === 0) return;
+    
+    const excelData = formatTableForExcel(tableRows);
+    const success = await copyToClipboard(excelData);
+    
+    if (success) {
+      setCopyNotification(true);
+      setTimeout(() => setCopyNotification(false), 2000);
+    }
+  };
 
   return (
     <Container maxWidth="lg" sx={{ py: 3 }}>
@@ -111,7 +149,14 @@ export default function PaintCalculator() {
                   <TableCell colSpan={5} />
                 </TableRow>
               ) : (
-                <TableRow key={i}>
+                <TableRow 
+                  key={i}
+                  onClick={() => handleRowClick(row)}
+                  sx={{ 
+                    cursor: 'pointer',
+                    '&:hover': { backgroundColor: '#f0f0f0' }
+                  }}
+                >
                   <TableCell>{row.data.en}</TableCell>
                   <TableCell>{row.data.ru}</TableCell>
                   <TableCell align="right">{row.data.unit}</TableCell>
@@ -123,7 +168,10 @@ export default function PaintCalculator() {
                       <IconButton 
                         size="small" 
                         color="primary" 
-                        onClick={() => startEditWork(i)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          startEditWork(i);
+                        }}
                         title="Редактировать работу"
                       >
                         <Edit fontSize="small" />
@@ -131,7 +179,10 @@ export default function PaintCalculator() {
                       <IconButton 
                         size="small" 
                         color="error" 
-                        onClick={() => removeWork(i)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          removeWork(i);
+                        }}
                         title="Удалить работу"
                       >
                         <Delete fontSize="small" />
@@ -151,7 +202,45 @@ export default function PaintCalculator() {
             </TableRow>
           </TableFooter>
         </Table>
+        
+        {/* Кнопка копирования в Excel */}
+        {tableRows.length > 0 && (
+          <Stack direction="row" justifyContent="center" sx={{ mt: 2 }}>
+            <Button
+              variant="outlined"
+              startIcon={<ContentCopy />}
+              onClick={handleCopyToExcel}
+              disabled={tableRows.length === 0}
+            >
+              Копировать в Excel
+            </Button>
+          </Stack>
+        )}
       </Paper>
+
+      {/* Модальное окно детализации цены */}
+      <PriceBreakdownModal
+        open={breakdownModalOpen}
+        onClose={() => setBreakdownModalOpen(false)}
+        breakdown={selectedBreakdown}
+        workTitle={selectedWorkTitle}
+      />
+
+      {/* Уведомление о копировании */}
+      <Snackbar
+        open={copyNotification}
+        autoHideDuration={2000}
+        onClose={() => setCopyNotification(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert 
+          onClose={() => setCopyNotification(false)} 
+          severity="success" 
+          sx={{ width: '100%' }}
+        >
+          Данные скопированы в буфер обмена! После вставки установите формат "Числовой" для колонки с ценами.
+        </Alert>
+      </Snackbar>
     </Container>
   );
 }

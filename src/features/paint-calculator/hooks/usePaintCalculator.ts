@@ -1,11 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AREA_OPTIONS, type AreaKind } from "../types/areas";
 import type { PaintWorkPickerValue } from "../components/PaintWorkPicker";
-import type { PaintTableRow, PaintSectionRow } from "../types";
+import type { PaintTableRow, PaintSectionRow, PaintCalculatorState } from "../types";
 import { 
   createWorkRow, 
   resetWorkCoeffs, 
-  restoreWorkFromRow 
+  restoreWorkFromRow,
+  saveStateToLocalStorage,
+  loadStateFromLocalStorage,
+  clearStateFromLocalStorage
 } from "../utils";
 
 const initialWork: PaintWorkPickerValue = {
@@ -38,6 +41,30 @@ export const usePaintCalculator = () => {
   const [tableRows, setTableRows] = useState<PaintTableRow[]>([]);
   const [currentSection, setCurrentSection] = useState<AreaKind | null>(null);
   const [editingRowIndex, setEditingRowIndex] = useState<number | null>(null);
+
+  // Загрузка состояния из localStorage при инициализации
+  useEffect(() => {
+    const savedState = loadStateFromLocalStorage();
+    if (savedState) {
+      setAreaKind(savedState.areaKind);
+      setAreaTotal(savedState.areaTotal);
+      setTableRows(savedState.tableRows);
+      setCurrentSection(savedState.currentSection);
+      setEditingRowIndex(savedState.editingRowIndex);
+    }
+  }, []);
+
+  // Сохранение состояния в localStorage при изменениях
+  useEffect(() => {
+    const state: PaintCalculatorState = {
+      areaKind,
+      areaTotal,
+      tableRows,
+      currentSection,
+      editingRowIndex
+    };
+    saveStateToLocalStorage(state);
+  }, [areaKind, areaTotal, tableRows, currentSection, editingRowIndex]);
 
   const addWork = () => {
     if (!work.path) return;
@@ -98,6 +125,7 @@ export const usePaintCalculator = () => {
   const clear = () => {
     setTableRows([]);
     setCurrentSection(null);
+    clearStateFromLocalStorage();
   };
 
   const removeWork = (index: number) => {

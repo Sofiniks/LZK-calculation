@@ -24,9 +24,9 @@
   "painting": {
     "full_single": { "en": "Full coat single-component", "ru": "Полный слой однокомпонентная краска", "unit": "sq.m", "price": 1.20 },
     "full_antifouling": { "en": "Full coat antifouling", "ru": "Полный слой противообрастающая краска", "unit": "sq.m", "price": 1.40 },
-    "full_double_ratio": { "en": "Full coat double-component", "ru": "Полный слой двухкомпонентная краска", "type": "ratio", "value": 1.1 },
-    "dft150_ratio": { "en": "Full coat DFT 150 mic", "ru": "Толщина слоя 150 мкм", "type": "ratio", "value": 1.05 },
-    "dft200_ratio": { "en": "Full coat DFT 200 mic", "ru": "Толщина слоя 200 мкм", "type": "ratio", "value": 1.1 },
+    "full_double_ratio": { "en": "Double-component paint (epoxy)", "ru": "Двухкомпонентная краска (эпоксидная)", "type": "ratio", "value": 1.1 },
+    "dft150_ratio": { "en": "DFT 150 mic", "ru": "Толщина слоя 150 мкм", "type": "ratio", "value": 1.05 },
+    "dft200_ratio": { "en": "DFT 200 mic", "ru": "Толщина слоя 200 мкм", "type": "ratio", "value": 1.1 },
     "stripe": { "en": "Stripe coating, per layer", "ru": "Полосовая окраска за слой", "unit": "run.m", "price": 2.50 },
     "manual": { "en": "Manual painting, per layer", "ru": "Ручная окраска за слой", "unit": "sq.m", "price": 3.60 }
   },

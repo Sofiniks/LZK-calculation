@@ -13,6 +13,8 @@ export type PaintSectionRow = {
 export type PaintWorkRow = {
   type: 'work';
   data: Row;
+  path: string;
+  multipliers: string[];
 };
 
 export type PaintTableRow = PaintSectionRow | PaintWorkRow;
