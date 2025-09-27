@@ -12,7 +12,7 @@ export const formatTableForExcel = (tableRows: PaintTableRow[]): string => {
       // Строка работы - добавляем все данные кроме итоговой суммы
       const data = row.data;
       lines.push(
-        `${data.en}\t${data.ru}\t${data.unit}\t${data.qty}\t${data.unitPrice.toFixed(2)}\t`
+        `${data.en}\t${data.ru}\t${data.unit}\t${data.qty}\t${data.unitPrice.toFixed(2).replace('.', ',')}\t`
       );
     }
   }

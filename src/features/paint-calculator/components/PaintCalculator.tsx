@@ -116,15 +116,16 @@ export default function PaintCalculator() {
         </Stack>
       </Paper>
 
-      <Paper sx={{ p: 2 }}>
-        <Table size="small" sx={{ 
-          fontFamily: 'Arial, sans-serif !important',
-          fontSize: '15px !important',
-          '& *': {
+      {tableRows.length > 0 && (
+        <Paper sx={{ p: 2 }}>
+          <Table size="small" sx={{ 
             fontFamily: 'Arial, sans-serif !important',
-            fontSize: '15px !important'
-          }
-        }}>
+            fontSize: '15px !important',
+            '& *': {
+              fontFamily: 'Arial, sans-serif !important',
+              fontSize: '15px !important'
+            }
+          }}>
           <TableHead>
             <TableRow>
               <TableCell sx={{ whiteSpace: 'nowrap', fontWeight: 'bold' }}>Jobs' description</TableCell>
@@ -216,7 +217,8 @@ export default function PaintCalculator() {
             </Button>
           </Stack>
         )}
-      </Paper>
+        </Paper>
+      )}
 
       {/* Модальное окно детализации цены */}
       <PriceBreakdownModal
