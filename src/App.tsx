@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AppBar, Toolbar, Typography, Button, Box } from "@mui/material";
+import { AppBar, Toolbar, Typography, Button, Box, IconButton } from "@mui/material";
 import { PaintCalculator } from "./features/paint-calculator";
 import Home from "./pages/Home/Home";
 
@@ -25,15 +25,28 @@ export default function App() {
     <Box>
       <AppBar position="static">
         <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Калькуляторы
-          </Typography>
-          <Button 
-            color="inherit" 
+          <IconButton
+            edge="start"
+            color="inherit"
+            aria-label="home"
             onClick={() => setCurrentPage("home")}
+            sx={{ mr: 2 }}
           >
-            Главная
-          </Button>
+            <img 
+              src="./logo.png" 
+              alt="Logo" 
+              style={{ 
+                height: '48px', 
+                width: 'auto',
+                filter: 'brightness(0) invert(1)' // Делаем логотип белым
+              }}
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+              }}
+            />
+          </IconButton>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          </Typography>
           <Button 
             color="inherit" 
             onClick={() => setCurrentPage("paint-calculator")}

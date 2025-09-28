@@ -41,16 +41,21 @@ export const usePaintCalculator = () => {
   const [tableRows, setTableRows] = useState<PaintTableRow[]>([]);
   const [currentSection, setCurrentSection] = useState<AreaKind | null>(null);
   const [editingRowIndex, setEditingRowIndex] = useState<number | null>(null);
+  const [customAreaNames, setCustomAreaNames] = useState<Record<string, { labelRu: string; labelEn: string }>>({});
 
   // Загрузка состояния из localStorage при инициализации
   useEffect(() => {
     const savedState = loadStateFromLocalStorage();
+    console.log('Loading state from localStorage:', savedState);
     if (savedState) {
       setAreaKind(savedState.areaKind);
       setAreaTotal(savedState.areaTotal);
       setTableRows(savedState.tableRows);
       setCurrentSection(savedState.currentSection);
       setEditingRowIndex(savedState.editingRowIndex);
+      console.log('State restored successfully');
+    } else {
+      console.log('No saved state found');
     }
   }, []);
 
@@ -63,6 +68,7 @@ export const usePaintCalculator = () => {
       currentSection,
       editingRowIndex
     };
+    console.log('Saving state to localStorage:', state);
     saveStateToLocalStorage(state);
   }, [areaKind, areaTotal, tableRows, currentSection, editingRowIndex]);
 
@@ -81,13 +87,14 @@ export const usePaintCalculator = () => {
       
       if (!existingSection) {
         // Создаем новый раздел только если его еще нет
-        const areaOption = AREA_OPTIONS.find(a => a.value === areaKind);
+        const displayName = getAreaDisplayName(areaKind);
         const sectionRow: PaintSectionRow = {
           type: 'section',
           areaKind,
           areaTotal,
-          labelEn: `${areaOption?.labelEn} - ${areaTotal}m2`,
-          labelRu: `${areaOption?.labelRu} - ${areaTotal} м2`
+          labelEn: `${displayName.labelEn} - ${areaTotal}m2`,
+          labelRu: `${displayName.labelRu} - ${areaTotal} м2`,
+          isCustom: !!customAreaNames[areaKind]
         };
         setTableRows(prev => [...prev, sectionRow]);
       }
@@ -96,30 +103,8 @@ export const usePaintCalculator = () => {
 
     const workRow = createWorkRow(work, areaKind, areaTotal);
 
-    // Если это существующий раздел, добавляем работу после его заголовка
-    if (currentSection !== areaKind) {
-      const existingSectionIndex = tableRows.findIndex(row => 
-        row.type === 'section' && row.areaKind === areaKind
-      );
-      
-      if (existingSectionIndex !== -1) {
-        // Находим конец этого раздела (до следующего раздела или конца таблицы)
-        let insertIndex = existingSectionIndex + 1;
-        while (insertIndex < tableRows.length && tableRows[insertIndex].type === 'work') {
-          insertIndex++;
-        }
-        
-        setTableRows(prev => {
-          const newRows = [...prev];
-          newRows.splice(insertIndex, 0, workRow);
-          return newRows;
-        });
-      } else {
-        setTableRows(prev => [...prev, workRow]);
-      }
-    } else {
-      setTableRows(prev => [...prev, workRow]);
-    }
+    // Добавляем работу в конец таблицы
+    setTableRows(prev => [...prev, workRow]);
   };
 
   const clear = () => {
@@ -158,6 +143,25 @@ export const usePaintCalculator = () => {
     }
   };
 
+  const setCustomAreaName = (areaKind: AreaKind, customName: { labelRu: string; labelEn: string }) => {
+    setCustomAreaNames(prev => ({
+      ...prev,
+      [areaKind]: customName
+    }));
+  };
+
+  const getAreaDisplayName = (areaKind: AreaKind) => {
+    const customName = customAreaNames[areaKind];
+    if (customName) {
+      return customName;
+    }
+    const areaOption = AREA_OPTIONS.find(a => a.value === areaKind);
+    return {
+      labelRu: areaOption?.labelRu || areaKind,
+      labelEn: areaOption?.labelEn || areaKind
+    };
+  };
+
   const sum = tableRows
     .filter(row => row.type === 'work')
     .reduce((a, r) => a + r.data.total, 0);
@@ -170,6 +174,7 @@ export const usePaintCalculator = () => {
     tableRows,
     editingRowIndex,
     sum,
+    customAreaNames,
     
     // Actions
     setAreaKind,
@@ -180,6 +185,8 @@ export const usePaintCalculator = () => {
     removeWork,
     startEditWork,
     cancelEdit,
-    saveEdit
+    saveEdit,
+    setCustomAreaName,
+    getAreaDisplayName
   };
 };

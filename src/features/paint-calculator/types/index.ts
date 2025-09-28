@@ -8,6 +8,7 @@ export type PaintSectionRow = {
   areaTotal: number;
   labelEn: string;
   labelRu: string;
+  isCustom?: boolean; // Флаг для пользовательских разделов
 };
 
 export type PaintWorkRow = {

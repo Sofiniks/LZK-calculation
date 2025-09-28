@@ -2,10 +2,11 @@ import {
   Container, Paper, Stack, TextField, Button, Table, TableHead, TableRow, TableCell, TableBody, TableFooter,
   Typography, FormControl, InputLabel, Select, MenuItem, Chip, IconButton, Alert, Snackbar
 } from "@mui/material";
-import { Delete, Edit, ContentCopy } from "@mui/icons-material";
+import { Delete, Edit, ContentCopy, FileCopy } from "@mui/icons-material";
 import { useState } from "react";
 import PaintWorkPicker from "./PaintWorkPicker";
 import PriceBreakdownModal, { type PriceBreakdown } from "./PriceBreakdownModal";
+import CustomAreaModal from "./CustomAreaModal";
 import { AREA_OPTIONS, type AreaKind } from "../types/areas";
 import { usePaintCalculator } from "../hooks";
 import { calculatePriceBreakdown, formatTableForExcel, copyToClipboard } from "../utils";
@@ -26,7 +27,10 @@ export default function PaintCalculator() {
     removeWork,
     startEditWork,
     cancelEdit,
-    saveEdit
+    saveEdit,
+    setCustomAreaName,
+    getAreaDisplayName,
+    customAreaNames
   } = usePaintCalculator();
 
   // Состояние для модального окна детализации цены
@@ -36,6 +40,10 @@ export default function PaintCalculator() {
   
   // Состояние для уведомления о копировании
   const [copyNotification, setCopyNotification] = useState(false);
+  
+  // Состояние для модального окна пользовательского раздела
+  const [customAreaModalOpen, setCustomAreaModalOpen] = useState(false);
+  const [pendingAreaKind, setPendingAreaKind] = useState<AreaKind | null>(null);
 
   // Обработчик клика на строку для показа детализации цены
   const handleRowClick = (row: any) => {
@@ -64,6 +72,40 @@ export default function PaintCalculator() {
     }
   };
 
+  // Обработчик копирования отдельной строки
+  const handleCopyRow = async (row: any) => {
+    if (row.type === 'work' && row.data) {
+      const rowData = `${row.data.en}\t${row.data.ru}\t${row.data.unit}\t${row.data.qty}\t${row.data.unitPrice.toFixed(2).replace('.', ',')}\t`;
+      const success = await copyToClipboard(rowData);
+      
+      if (success) {
+        setCopyNotification(true);
+        setTimeout(() => setCopyNotification(false), 2000);
+      }
+    }
+  };
+
+  // Обработчик изменения участка
+  const handleAreaChange = (newAreaKind: AreaKind) => {
+    if (newAreaKind === "other") {
+      setPendingAreaKind(newAreaKind);
+      setCustomAreaModalOpen(true);
+    } else {
+      setAreaKind(newAreaKind);
+    }
+  };
+
+  // Обработчик сохранения пользовательского раздела
+  const handleCustomAreaSave = (customArea: { labelRu: string; labelEn: string }) => {
+    if (pendingAreaKind) {
+      // Создаем уникальный ключ для кастомной области
+      const customKey = `custom_${Date.now()}`;
+      setCustomAreaName(customKey, customArea);
+      setAreaKind(customKey as any);
+    }
+    setPendingAreaKind(null);
+  };
+
   return (
     <Container maxWidth="lg" sx={{ py: 3 }}>
       <Paper sx={{ p: 2, mb: 3 }}>
@@ -75,11 +117,20 @@ export default function PaintCalculator() {
               <Select
                 label="Участок"
                 value={areaKind}
-                onChange={(e) => setAreaKind(e.target.value as AreaKind)}
+                onChange={(e) => handleAreaChange(e.target.value as AreaKind)}
               >
-                {AREA_OPTIONS.map(a => (
-                  <MenuItem key={a.value} value={a.value}>
-                    {a.labelRu}{a.autoRatios?.length ? <Chip size="small" sx={{ ml: 1 }} label="автокф" /> : null}
+                {AREA_OPTIONS.map(a => {
+                  const displayName = getAreaDisplayName(a.value);
+                  return (
+                    <MenuItem key={a.value} value={a.value}>
+                      {displayName.labelRu}{a.autoRatios?.length ? <Chip size="small" sx={{ ml: 1 }} label="автокф" /> : null}
+                    </MenuItem>
+                  );
+                })}
+                {/* Показываем кастомные области, если они есть */}
+                {Object.entries(customAreaNames).map(([key, names]) => (
+                  <MenuItem key={`custom_${key}`} value={key}>
+                    {names.labelRu}
                   </MenuItem>
                 ))}
               </Select>
@@ -134,7 +185,7 @@ export default function PaintCalculator() {
               <TableCell align="right" sx={{ whiteSpace: 'nowrap', fontWeight: 'bold' }}>Q-ty</TableCell>
               <TableCell align="right" sx={{ whiteSpace: 'nowrap', fontWeight: 'bold' }}>Price / unit</TableCell>
               <TableCell align="right" sx={{ whiteSpace: 'nowrap', fontWeight: 'bold' }}>Total, EUR</TableCell>
-              <TableCell width={100}></TableCell>
+              <TableCell width={120}></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -165,7 +216,7 @@ export default function PaintCalculator() {
                   <TableCell align="right">{row.data.unitPrice.toFixed(2)}</TableCell>
                   <TableCell align="right">{row.data.total.toFixed(2)}</TableCell>
                   <TableCell align="center">
-                    <Stack direction="row" spacing={0.5}>
+                    <Stack direction="row" spacing={0.5} justifyContent="center">
                       <IconButton 
                         size="small" 
                         color="primary" 
@@ -187,6 +238,17 @@ export default function PaintCalculator() {
                         title="Удалить работу"
                       >
                         <Delete fontSize="small" />
+                      </IconButton>
+                      <IconButton 
+                        size="small" 
+                        sx={{ color: '#2e7d32' }} 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleCopyRow(row);
+                        }}
+                        title="Копировать строку в Excel"
+                      >
+                        <FileCopy fontSize="small" />
                       </IconButton>
                     </Stack>
                   </TableCell>
@@ -240,9 +302,19 @@ export default function PaintCalculator() {
           severity="success" 
           sx={{ width: '100%' }}
         >
-          Данные скопированы в буфер обмена! После вставки установите формат "Числовой" для колонки с ценами.
+          Данные скопированы в буфер обмена! 
         </Alert>
       </Snackbar>
+
+      {/* Модальное окно для пользовательского раздела */}
+      <CustomAreaModal
+        open={customAreaModalOpen}
+        onClose={() => {
+          setCustomAreaModalOpen(false);
+          setPendingAreaKind(null);
+        }}
+        onSave={handleCustomAreaSave}
+      />
     </Container>
   );
 }

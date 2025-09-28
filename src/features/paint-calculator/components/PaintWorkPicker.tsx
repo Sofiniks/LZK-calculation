@@ -1,8 +1,22 @@
 import { useMemo, useState } from "react";
-import { FormControl, InputLabel, MenuItem, Select, Stack, TextField, Checkbox, FormControlLabel, Button, Collapse, Typography } from "@mui/material";
+import { FormControl, InputLabel, MenuItem, Select, Stack, TextField, Checkbox, FormControlLabel, Button, Collapse, Typography, Chip } from "@mui/material";
 import { ExpandMore, ExpandLess } from "@mui/icons-material";
 import pricelist from "../../../calc/pricelist";
 import { getPriceItem } from "../../../calc/engine";
+
+// Маппинг коэффициентов и их значений
+const COEFFICIENT_VALUES: Record<string, number> = {
+  framework: 1.25,
+  confined: 3.5,
+  hold: 1.15,
+  icePaint: 1.7,
+  dft800: 1.5,
+  dft1500: 2.0,
+  metalStructures: 1.45,
+  lifting: 1.2,
+  hatchCovers: 1.2,
+  deckSaturation: 1.2
+};
 
 type Opt = { path: string; label: string };
 
@@ -268,7 +282,18 @@ export default function PaintWorkPicker(props: {
                 })}
               />
             }
-            label="Открытые поверхности с набором"
+            label={
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <span>Открытые поверхности с набором</span>
+                <Chip 
+                  label={`×${COEFFICIENT_VALUES.framework}`} 
+                  size="small" 
+                  color="primary" 
+                  variant="outlined"
+                  sx={{ fontSize: '0.75rem', height: '20px' }}
+                />
+              </Stack>
+            }
           />
           <FormControlLabel
             control={
@@ -291,7 +316,18 @@ export default function PaintWorkPicker(props: {
                 })}
               />
             }
-            label="Закрытые помещения (танки)"
+            label={
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <span>Закрытые помещения (танки)</span>
+                <Chip 
+                  label={`×${COEFFICIENT_VALUES.confined}`} 
+                  size="small" 
+                  color="primary" 
+                  variant="outlined"
+                  sx={{ fontSize: '0.75rem', height: '20px' }}
+                />
+              </Stack>
+            }
           />
           <FormControlLabel
             control={
@@ -314,7 +350,18 @@ export default function PaintWorkPicker(props: {
                 })}
               />
             }
-            label="Обработка трюмов"
+            label={
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <span>Обработка трюмов</span>
+                <Chip 
+                  label={`×${COEFFICIENT_VALUES.hold}`} 
+                  size="small" 
+                  color="primary" 
+                  variant="outlined"
+                  sx={{ fontSize: '0.75rem', height: '20px' }}
+                />
+              </Stack>
+            }
           />
           <FormControlLabel
             control={
@@ -337,7 +384,18 @@ export default function PaintWorkPicker(props: {
                 })}
               />
             }
-            label="Удаление ледовой краски"
+            label={
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <span>Удаление ледовой краски</span>
+                <Chip 
+                  label={`×${COEFFICIENT_VALUES.icePaint}`} 
+                  size="small" 
+                  color="primary" 
+                  variant="outlined"
+                  sx={{ fontSize: '0.75rem', height: '20px' }}
+                />
+              </Stack>
+            }
           />
           <FormControlLabel
             control={
@@ -360,7 +418,18 @@ export default function PaintWorkPicker(props: {
                 })}
               />
             }
-            label="Старое покрытие >800 мкм"
+            label={
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <span>Старое покрытие &gt;800 мкм</span>
+                <Chip 
+                  label={`×${COEFFICIENT_VALUES.dft800}`} 
+                  size="small" 
+                  color="primary" 
+                  variant="outlined"
+                  sx={{ fontSize: '0.75rem', height: '20px' }}
+                />
+              </Stack>
+            }
           />
           <FormControlLabel
             control={
@@ -383,7 +452,18 @@ export default function PaintWorkPicker(props: {
                 })}
               />
             }
-            label="Старое покрытие >1500 мкм"
+            label={
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <span>Старое покрытие &gt;1500 мкм</span>
+                <Chip 
+                  label={`×${COEFFICIENT_VALUES.dft1500}`} 
+                  size="small" 
+                  color="primary" 
+                  variant="outlined"
+                  sx={{ fontSize: '0.75rem', height: '20px' }}
+                />
+              </Stack>
+            }
           />
           <FormControlLabel
             control={
@@ -406,7 +486,18 @@ export default function PaintWorkPicker(props: {
                 })}
               />
             }
-            label="Металлоконструкции"
+            label={
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <span>Металлоконструкции</span>
+                <Chip 
+                  label={`×${COEFFICIENT_VALUES.metalStructures}`} 
+                  size="small" 
+                  color="primary" 
+                  variant="outlined"
+                  sx={{ fontSize: '0.75rem', height: '20px' }}
+                />
+              </Stack>
+            }
           />
           <FormControlLabel
             control={
@@ -429,7 +520,18 @@ export default function PaintWorkPicker(props: {
                 })}
               />
             }
-            label="С использованием подъемных средств"
+            label={
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <span>С использованием подъемных средств</span>
+                <Chip 
+                  label={`×${COEFFICIENT_VALUES.lifting}`} 
+                  size="small" 
+                  color="primary" 
+                  variant="outlined"
+                  sx={{ fontSize: '0.75rem', height: '20px' }}
+                />
+              </Stack>
+            }
           />
           <FormControlLabel
             control={
@@ -452,7 +554,18 @@ export default function PaintWorkPicker(props: {
                 })}
               />
             }
-            label="Люковые закрытия"
+            label={
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <span>Люковые закрытия</span>
+                <Chip 
+                  label={`×${COEFFICIENT_VALUES.hatchCovers}`} 
+                  size="small" 
+                  color="primary" 
+                  variant="outlined"
+                  sx={{ fontSize: '0.75rem', height: '20px' }}
+                />
+              </Stack>
+            }
           />
           <FormControlLabel
             control={
@@ -475,7 +588,18 @@ export default function PaintWorkPicker(props: {
                 })}
               />
             }
-            label="Палуба с насыщением"
+            label={
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <span>Палуба с насыщением</span>
+                <Chip 
+                  label={`×${COEFFICIENT_VALUES.deckSaturation}`} 
+                  size="small" 
+                  color="primary" 
+                  variant="outlined"
+                  sx={{ fontSize: '0.75rem', height: '20px' }}
+                />
+              </Stack>
+            }
           />
         </Stack>
       </Stack>
