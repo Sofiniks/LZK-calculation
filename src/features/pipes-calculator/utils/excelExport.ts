@@ -1,17 +1,14 @@
-import type { PaintTableRow } from '../types';
+import type { PipeTableRow } from '../types';
 
 // Функция для форматирования данных таблицы в Excel формат
-export const formatTableForExcel = (tableRows: PaintTableRow[]): string => {
+export const formatTableForExcel = (tableRows: PipeTableRow[]): string => {
   const lines: string[] = [];
   
   // Добавляем пробел перед тире, чтобы Excel не воспринимал это как формулу
   const formatForExcel = (text: string) => text.startsWith('-') ? ` -${text.substring(1)}` : text;
   
   for (const row of tableRows) {
-    if (row.type === 'section') {
-      // Строка раздела - добавляем название участка
-      lines.push(`${formatForExcel(row.labelEn)}\t${formatForExcel(row.labelRu)}\t\t\t\t`);
-    } else if (row.type === 'work') {
+    if (row.type === 'work') {
       // Строка работы - добавляем все данные кроме итоговой суммы
       const data = row.data;
       lines.push(

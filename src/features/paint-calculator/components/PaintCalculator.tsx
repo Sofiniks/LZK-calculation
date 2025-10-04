@@ -7,6 +7,7 @@ import { useState } from "react";
 import PaintWorkPicker from "./PaintWorkPicker";
 import PriceBreakdownModal, { type PriceBreakdown } from "./PriceBreakdownModal";
 import CustomAreaModal from "./CustomAreaModal";
+import MarksModal, { type MarkItem } from "./MarksModal";
 import { AREA_OPTIONS, type AreaKind } from "../types/areas";
 import { usePaintCalculator } from "../hooks";
 import { calculatePriceBreakdown, formatTableForExcel, copyToClipboard } from "../utils";
@@ -30,7 +31,8 @@ export default function PaintCalculator() {
     saveEdit,
     setCustomAreaName,
     getAreaDisplayName,
-    customAreaNames
+    customAreaNames,
+    setTableRows
   } = usePaintCalculator();
 
   // Состояние для модального окна детализации цены
@@ -44,6 +46,9 @@ export default function PaintCalculator() {
   // Состояние для модального окна пользовательского раздела
   const [customAreaModalOpen, setCustomAreaModalOpen] = useState(false);
   const [pendingAreaKind, setPendingAreaKind] = useState<AreaKind | null>(null);
+  
+  // Состояние для модального окна марок
+  const [marksModalOpen, setMarksModalOpen] = useState(false);
 
   // Обработчик клика на строку для показа детализации цены
   const handleRowClick = (row: any) => {
@@ -75,7 +80,10 @@ export default function PaintCalculator() {
   // Обработчик копирования отдельной строки
   const handleCopyRow = async (row: any) => {
     if (row.type === 'work' && row.data) {
-      const rowData = `${row.data.en}\t${row.data.ru}\t${row.data.unit}\t${row.data.qty}\t${row.data.unitPrice.toFixed(2).replace('.', ',')}\t`;
+      // Добавляем пробел перед тире, чтобы Excel не воспринимал это как формулу
+      const formatForExcel = (text: string) => text.startsWith('-') ? ` -${text.substring(1)}` : text;
+      
+      const rowData = `${formatForExcel(row.data.en)}\t${formatForExcel(row.data.ru)}\t${row.data.unit}\t${row.data.qty}\t${row.data.unitPrice.toFixed(2).replace('.', ',')}\t`;
       const success = await copyToClipboard(rowData);
       
       if (success) {
@@ -104,6 +112,42 @@ export default function PaintCalculator() {
       setAreaKind(customKey as any);
     }
     setPendingAreaKind(null);
+  };
+
+  // Обработчик добавления марок
+  const handleMarksSave = (selectedMarks: MarkItem[], waterlineMeters: number) => {
+    // Создаем раздел "Перекраска марок"
+    const sectionRow = {
+      type: 'section' as const,
+      areaKind: 'marks' as any,
+      areaTotal: 0,
+      labelEn: 'Re-painting of Marks on existing markings for 1 layer',
+      labelRu: 'Перекраска марок по существующей разметке за 1 слой',
+      isCustom: false
+    };
+
+    // Добавляем выбранные марки
+    const markRows = selectedMarks.map(mark => {
+      const qty = mark.isWaterline ? waterlineMeters : mark.defaultQty;
+      const total = mark.price * qty;
+      
+      return {
+        type: 'work' as const,
+        data: {
+          en: mark.en,
+          ru: mark.ru,
+          unit: mark.unit as any,
+          qty: qty,
+          unitPrice: mark.price,
+          total: total
+        },
+        path: `marks.${mark.id}`,
+        multipliers: []
+      };
+    });
+
+    // Добавляем раздел и марки в таблицу
+    setTableRows(prev => [...prev, sectionRow, ...markRows]);
   };
 
   return (
@@ -163,6 +207,28 @@ export default function PaintCalculator() {
                 <Button color="error" onClick={clear}>Очистить</Button>
               </>
             )}
+          </Stack>
+
+          {/* Отдельный ряд для специальных функций */}
+          <Stack direction="row" spacing={2} justifyContent="center">
+            <Button 
+              variant="outlined" 
+              onClick={() => setMarksModalOpen(true)}
+            >
+              Перекраска марок
+            </Button>
+            <Button 
+              variant="outlined" 
+              disabled
+            >
+              Защита
+            </Button>
+            <Button 
+              variant="outlined" 
+              disabled
+            >
+              Справочник работ
+            </Button>
           </Stack>
         </Stack>
       </Paper>
@@ -314,6 +380,13 @@ export default function PaintCalculator() {
           setPendingAreaKind(null);
         }}
         onSave={handleCustomAreaSave}
+      />
+
+      {/* Модальное окно для марок */}
+      <MarksModal
+        open={marksModalOpen}
+        onClose={() => setMarksModalOpen(false)}
+        onSave={handleMarksSave}
       />
     </Container>
   );

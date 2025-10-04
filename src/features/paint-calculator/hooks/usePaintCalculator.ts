@@ -42,35 +42,44 @@ export const usePaintCalculator = () => {
   const [currentSection, setCurrentSection] = useState<AreaKind | null>(null);
   const [editingRowIndex, setEditingRowIndex] = useState<number | null>(null);
   const [customAreaNames, setCustomAreaNames] = useState<Record<string, { labelRu: string; labelEn: string }>>({});
+  const [isInitialized, setIsInitialized] = useState<boolean>(false);
 
   // Загрузка состояния из localStorage при инициализации
   useEffect(() => {
+    console.log('usePaintCalculator: Initializing hook');
     const savedState = loadStateFromLocalStorage();
-    console.log('Loading state from localStorage:', savedState);
+    console.log('usePaintCalculator: Loading state from localStorage:', savedState);
     if (savedState) {
       setAreaKind(savedState.areaKind);
       setAreaTotal(savedState.areaTotal);
-      setTableRows(savedState.tableRows);
-      setCurrentSection(savedState.currentSection);
-      setEditingRowIndex(savedState.editingRowIndex);
-      console.log('State restored successfully');
+      setTableRows(savedState.tableRows || []);
+      setCurrentSection(savedState.currentSection || null);
+      setEditingRowIndex(savedState.editingRowIndex || null);
+      if (savedState.customAreaNames) {
+        setCustomAreaNames(savedState.customAreaNames);
+      }
+      console.log('usePaintCalculator: State restored successfully, tableRows count:', savedState.tableRows?.length || 0);
     } else {
-      console.log('No saved state found');
+      console.log('usePaintCalculator: No saved state found');
     }
+    setIsInitialized(true);
   }, []);
 
   // Сохранение состояния в localStorage при изменениях
   useEffect(() => {
+    if (!isInitialized) return; // Не сохраняем до инициализации
+    
     const state: PaintCalculatorState = {
       areaKind,
       areaTotal,
       tableRows,
       currentSection,
-      editingRowIndex
+      editingRowIndex,
+      customAreaNames
     };
-    console.log('Saving state to localStorage:', state);
+    console.log('usePaintCalculator: Saving state to localStorage, tableRows count:', tableRows.length);
     saveStateToLocalStorage(state);
-  }, [areaKind, areaTotal, tableRows, currentSection, editingRowIndex]);
+  }, [areaKind, areaTotal, tableRows, currentSection, editingRowIndex, customAreaNames, isInitialized]);
 
   const addWork = () => {
     if (!work.path) return;
@@ -187,6 +196,7 @@ export const usePaintCalculator = () => {
     cancelEdit,
     saveEdit,
     setCustomAreaName,
-    getAreaDisplayName
+    getAreaDisplayName,
+    setTableRows
   };
 };

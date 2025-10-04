@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { AppBar, Toolbar, Typography, Button, Box, IconButton } from "@mui/material";
 import { PaintCalculator } from "./features/paint-calculator";
+import { PipesCalculator } from "./features/pipes-calculator";
 import Home from "./pages/Home/Home";
 
-type Page = "paint-calculator" | "pipeline-calculator" | "home";
+type Page = "paint-calculator" | "pipeline-calculator" | "steel-calculator" | "work-reference" | "home";
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<Page>("home");
@@ -13,7 +14,11 @@ export default function App() {
       case "paint-calculator":
         return <PaintCalculator />;
       case "pipeline-calculator":
-        return <div>Калькулятор трубопроводных работ (в разработке)</div>;
+        return <PipesCalculator />;
+      case "steel-calculator":
+        return <div>Калькулятор стальных работ (в разработке)</div>;
+      case "work-reference":
+        return <div>Справочник всех работ (в разработке)</div>;
       case "home":
         return <Home onNavigate={setCurrentPage} />;
       default:
@@ -50,8 +55,15 @@ export default function App() {
           <Button 
             color="inherit" 
             onClick={() => setCurrentPage("paint-calculator")}
+            sx={{ mr: 1 }}
           >
             Покраска
+          </Button>
+          <Button 
+            color="inherit" 
+            onClick={() => setCurrentPage("pipeline-calculator")}
+          >
+            Трубы
           </Button>
         </Toolbar>
       </AppBar>

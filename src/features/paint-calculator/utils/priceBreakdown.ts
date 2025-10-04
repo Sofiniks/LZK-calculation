@@ -42,7 +42,7 @@ function getMultiplierDescription(key: string, value: number): string {
   const descriptions: Record<string, string> = {
     'area_lt_30': 'Покрытие ≤ 30%',
     'area_lt_70': 'Покрытие ≤ 70%',
-    'framework': 'Металлоконструкции',
+    'framework': 'Открытые поверхности с набором',
     'confined': 'Ограниченное пространство',
     'hold': 'Трюм',
     'ice_paint': 'Ледовая краска',

@@ -26,6 +26,7 @@ export type PaintCalculatorState = {
   tableRows: PaintTableRow[];
   currentSection: AreaKind | null;
   editingRowIndex: number | null;
+  customAreaNames: Record<string, { labelRu: string; labelEn: string }>;
 };
 
 export type PaintCalculatorActions = {

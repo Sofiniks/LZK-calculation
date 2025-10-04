@@ -1,5 +1,5 @@
 // Участки судна для покрасочных работ
-export type AreaKind = "topside" | "boottop" | "vertical" | "flat_bottom" | "hold" | "cranes" | "rudder_blade" | "vertical_bottom" | "other" | string;
+export type AreaKind = "topside" | "boottop" | "vertical" | "flat_bottom" | "hold" | "cranes" | "rudder_blade" | "vertical_bottom" | "marks" | "other" | string;
 
 export const AREA_OPTIONS: { value: AreaKind; labelRu: string; labelEn: string; autoRatios?: string[] }[] = [
   { value: "topside",     labelRu: "Надводный борт", labelEn: "Topside" },
